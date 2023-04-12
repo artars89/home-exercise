@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import cx, { APP_CONTAINER_HEIGHT, APP_CONTAINER_WIDTH, DRAGGABLE_BOX_SIZE } from "../utils";
 
-export interface DraggableBoxProps extends React.HTMLProps<HTMLDivElement> {
+export interface DraggableElementProps extends React.HTMLProps<HTMLDivElement> {
     x: number;
     y: number;
+    circle?: boolean;
     onUpdate?: (id: string, pos: Position) => void;
 }
 
-export type Position = Pick<DraggableBoxProps, 'x' | 'y'>;
+export type Position = Pick<DraggableElementProps, 'x' | 'y'>;
 
 type StartPosition = Position & {
     pageX: number;
@@ -21,7 +22,7 @@ const getMinMax = (value: number, axis: 'x' | 'y') => {
     return Math.min(appSize - DRAGGABLE_BOX_SIZE, Math.max(0, value));
 }
 
-export default function DraggableBox({ x = 0, y = 0, onUpdate, ...rest }: DraggableBoxProps) {
+export default function DraggableElement({ x = 0, y = 0, circle, onUpdate, ...rest }: DraggableElementProps) {
     const [startPos, setStartPos] = useState<StartPosition>();
     const [currentPos, setCurrentPos] = useState<Position>({ x, y });
     const xValue = currentPos.x;
@@ -67,6 +68,7 @@ export default function DraggableBox({ x = 0, y = 0, onUpdate, ...rest }: Dragga
 
     const className = cx(
         'bg-blue-500 absolute select-none text-xs',
+        circle && 'rounded-full',
         startPos ? grabbingCls : 'cursor-grab'
     );
     const elStyle = {

@@ -5,12 +5,13 @@ import { Position } from "./DraggableBox";
 export interface StaticAreaBoxProps extends React.HTMLProps<HTMLDivElement> {
     x: number;
     y: number;
+    circle?: boolean;
     boxPositions: Record<string, Position>;
 }
 
 const getRectArea = (width: number, height: number) => width * height;
 
-export default function StaticAreaBox({ x = 0, y = 0, boxPositions }: StaticAreaBoxProps) {
+export default function StaticAreaBox({ x = 0, y = 0, circle, boxPositions }: StaticAreaBoxProps) {
     const ref = useRef<HTMLCanvasElement>(null);
     const [visibleArea, setVisibleArea] = useState(getRectArea(STATIC_BOX_SIZE, STATIC_BOX_SIZE));
     const staticBoxStyle = {
@@ -24,7 +25,7 @@ export default function StaticAreaBox({ x = 0, y = 0, boxPositions }: StaticArea
         const canvasEl = ref.current;
         if (canvasEl) {
             const ctx = canvasEl.getContext('2d', { willReadFrequently: true })!;
-            ctx.clearRect(0, 0, 800, 500);
+            ctx.clearRect(0, 0, APP_CONTAINER_WIDTH, APP_CONTAINER_HEIGHT);
 
             // Draw the static area
             ctx.fillStyle = 'red';
@@ -32,7 +33,17 @@ export default function StaticAreaBox({ x = 0, y = 0, boxPositions }: StaticArea
 
             // Draw draggable elements
             for (const pos of Object.values(boxPositions)) {
-                ctx.clearRect(pos.x, pos.y, DRAGGABLE_BOX_SIZE, DRAGGABLE_BOX_SIZE);
+                if (circle) {
+                    const radius = DRAGGABLE_BOX_SIZE / 2;
+                    ctx.save();
+                    ctx.globalCompositeOperation = 'destination-out';
+                    ctx.beginPath()
+                    ctx.arc(pos.x + radius, pos.y + radius, radius, 0, 2 * Math.PI, false);
+                    ctx.fill();
+                    ctx.restore();
+                } else {
+                    ctx.clearRect(pos.x, pos.y, DRAGGABLE_BOX_SIZE, DRAGGABLE_BOX_SIZE);
+                }
             }
 
             const { data } = ctx.getImageData(0, 0, canvasEl.width, canvasEl.height);
@@ -47,7 +58,7 @@ export default function StaticAreaBox({ x = 0, y = 0, boxPositions }: StaticArea
             setVisibleArea(visiblePixels);
         }
 
-    }, [ref.current, boxPositions]);
+    }, [ref.current, circle, boxPositions]);
 
     return (
         <>

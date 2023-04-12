@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import DraggableBox, { DraggableBoxProps } from './components/DraggableBox';
+import DraggableElement, { DraggableElementProps } from './components/DraggableBox';
 import StaticAreaBox, { StaticAreaBoxProps } from './components/StaticAreaBox';
 import { APP_CONTAINER_HEIGHT, APP_CONTAINER_WIDTH, DRAGGABLE_BOXES_COUNT, DRAGGABLE_BOX_SIZE, STATIC_BOX_SIZE } from './utils';
 
@@ -15,7 +15,7 @@ function getRandomBoxGap() {
   return parseInt(`${Math.random() * 30}`, 10) + 10;
 }
 
-const draggableBoxes: DraggableBoxProps[] = [...Array(DRAGGABLE_BOXES_COUNT).keys()]
+const draggableBoxes: DraggableElementProps[] = [...Array(DRAGGABLE_BOXES_COUNT).keys()]
     .map(id => ({
       id: `i${id}`,
       x: DRAGGABLE_BOX_SIZE * (id % 2) + (id % 2) * 50 + getRandomBoxGap(),
@@ -23,24 +23,31 @@ const draggableBoxes: DraggableBoxProps[] = [...Array(DRAGGABLE_BOXES_COUNT).key
     }));
 
 export default function App() {
+  const [circlesEnabled, setCirclesEnabled] = useState(false);
   const [boxPositions, setBoxPositions] = useState<StaticAreaBoxProps['boxPositions']>({});
-  const onDraggableBoxUpdate: DraggableBoxProps['onUpdate'] = (id, pos) => {
+  const onDraggableBoxUpdate: DraggableElementProps['onUpdate'] = (id, pos) => {
     setBoxPositions({ ...boxPositions, [id]: pos });
   };
 
   return (
     <div>
+      <label className="flex items-center gap-1 select-none cursor-pointer">
+        <input type="checkbox" checked={circlesEnabled} onChange={ev => setCirclesEnabled(ev.target.checked)}/>
+        <span>Circles</span>
+      </label>
       <div className='border border-gray-500 rounded-sm relative' style={appContainerStyle}>
         <StaticAreaBox
           x={staticAreaBoxX}
           y={staticAreaBoxY}
+          circle={circlesEnabled}
           boxPositions={boxPositions}
         />
         {
           draggableBoxes.map((draggableBoxe) => (
-            <DraggableBox
+            <DraggableElement
               {...draggableBoxe}
               key={draggableBoxe.id}
+              circle={circlesEnabled}
               onUpdate={onDraggableBoxUpdate}
             />
           ))
