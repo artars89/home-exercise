@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { DRAGGABLE_BOX_SIZE, STATIC_BOX_SIZE } from "../utils";
+import { APP_CONTAINER_HEIGHT, APP_CONTAINER_WIDTH, DRAGGABLE_BOX_SIZE, STATIC_BOX_SIZE } from "../utils";
 import { Position } from "./DraggableBox";
 
 export interface StaticAreaBoxProps extends React.HTMLProps<HTMLDivElement> {
@@ -26,7 +26,7 @@ export default function StaticAreaBox({ x = 0, y = 0, boxPositions }: StaticArea
             const ctx = canvasEl.getContext('2d', { willReadFrequently: true })!;
             ctx.clearRect(0, 0, 800, 500);
 
-            // Draw the static are
+            // Draw the static area
             ctx.fillStyle = 'red';
             ctx.fillRect(x, y, STATIC_BOX_SIZE, STATIC_BOX_SIZE);
 
@@ -56,7 +56,12 @@ export default function StaticAreaBox({ x = 0, y = 0, boxPositions }: StaticArea
                     Visible area: {visibleArea}
                 </div>
             </div>
-            <canvas ref={ref} className="absolute top-[500px]" width="800" height="500"></canvas>
+            <canvas
+                ref={ref}
+                className="absolute top-[500px]"
+                width={APP_CONTAINER_WIDTH}
+                height={APP_CONTAINER_HEIGHT}
+            />
         </>
     )
 }
