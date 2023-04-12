@@ -22,7 +22,7 @@ const draggableBoxes: DraggableBoxProps[] = [...Array(DRAGGABLE_BOXES_COUNT).key
       y: DRAGGABLE_BOX_SIZE * (id % 3) + (id % 3) * 50 + getRandomBoxGap(),
     }));
 
-function App() {
+export default function App() {
   const [boxPositions, setBoxPositions] = useState<StaticAreaBoxProps['boxPositions']>({});
   const onDraggableBoxUpdate: DraggableBoxProps['onUpdate'] = (id, pos) => {
     setBoxPositions({ ...boxPositions, [id]: pos });
@@ -32,10 +32,10 @@ function App() {
     <div>
       <div className='border border-gray-500 rounded-sm relative' style={appContainerStyle}>
         <StaticAreaBox
-            x={staticAreaBoxX}
-            y={staticAreaBoxY}
-            boxPositions={boxPositions}
-          />
+          x={staticAreaBoxX}
+          y={staticAreaBoxY}
+          boxPositions={boxPositions}
+        />
         {
           draggableBoxes.map((draggableBoxe) => (
             <DraggableBox
@@ -49,5 +49,3 @@ function App() {
     </div>
   )
 }
-
-export default App

@@ -1,5 +1,5 @@
-import React from "react";
-import { STATIC_BOX_SIZE } from "../utils";
+import React, { useEffect, useRef, useState } from "react";
+import { DRAGGABLE_BOX_SIZE, STATIC_BOX_SIZE } from "../utils";
 import { Position } from "./DraggableBox";
 
 export interface StaticAreaBoxProps extends React.HTMLProps<HTMLDivElement> {
@@ -11,9 +11,8 @@ export interface StaticAreaBoxProps extends React.HTMLProps<HTMLDivElement> {
 const getRectArea = (width: number, height: number) => width * height;
 
 export default function StaticAreaBox({ x = 0, y = 0, boxPositions }: StaticAreaBoxProps) {
-    const initialArea = getRectArea(STATIC_BOX_SIZE, STATIC_BOX_SIZE);
-    const areaToSub = 0;
-    const finalArea = initialArea - areaToSub;
+    const ref = useRef<HTMLCanvasElement>(null);
+    const [visibleArea, setVisibleArea] = useState(getRectArea(STATIC_BOX_SIZE, STATIC_BOX_SIZE));
     const staticBoxStyle = {
         top: y,
         left: x,
@@ -21,11 +20,43 @@ export default function StaticAreaBox({ x = 0, y = 0, boxPositions }: StaticArea
         height: STATIC_BOX_SIZE,
     };
 
+    useEffect(() => {
+        const canvasEl = ref.current;
+        if (canvasEl) {
+            const ctx = canvasEl.getContext('2d', { willReadFrequently: true })!;
+            ctx.clearRect(0, 0, 800, 500);
+
+            // Draw the static are
+            ctx.fillStyle = 'red';
+            ctx.fillRect(x, y, STATIC_BOX_SIZE, STATIC_BOX_SIZE);
+
+            // Draw draggable elements
+            for (const pos of Object.values(boxPositions)) {
+                ctx.clearRect(pos.x, pos.y, DRAGGABLE_BOX_SIZE, DRAGGABLE_BOX_SIZE);
+            }
+
+            const { data } = ctx.getImageData(0, 0, canvasEl.width, canvasEl.height);
+            let visiblePixels = 0;
+
+            // Counte the number of visible pixels by alpha channel
+            for (let i = 0; i < data.length; i += 4) {
+                const alpha = data[i + 3];
+                if (alpha) visiblePixels++
+            }
+
+            setVisibleArea(visiblePixels);
+        }
+
+    }, [ref.current, boxPositions]);
+
     return (
-        <div className="bg-red-500 absolute" style={staticBoxStyle}>
-            <div className="absolute left-0 bottom-[-25px]">
-                Visible area: {finalArea}
+        <>
+            <div className="bg-red-500 absolute" style={staticBoxStyle}>
+                <div className="absolute left-0 bottom-[-25px]">
+                    Visible area: {visibleArea}
+                </div>
             </div>
-        </div>
+            <canvas ref={ref} className="absolute top-[500px]" width="800" height="500"></canvas>
+        </>
     )
 }
