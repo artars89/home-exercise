@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { APP_CONTAINER_HEIGHT, APP_CONTAINER_WIDTH, DRAGGABLE_BOX_SIZE, STATIC_BOX_SIZE } from "../utils";
-import { Position } from "./DraggableBox";
+import { Position } from "./DraggableElement";
 
 export interface StaticAreaBoxProps extends React.HTMLProps<HTMLDivElement> {
     x: number;
@@ -69,7 +69,7 @@ export default function StaticAreaBox({ x = 0, y = 0, circle, boxPositions }: St
             </div>
             <canvas
                 ref={ref}
-                className="absolute top-[500px]"
+                className="absolute hidden"
                 width={APP_CONTAINER_WIDTH}
                 height={APP_CONTAINER_HEIGHT}
             />

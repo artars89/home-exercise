@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import DraggableElement, { DraggableElementProps } from './components/DraggableBox';
+import DraggableElement, { DraggableElementProps } from './components/DraggableElement';
 import StaticAreaBox, { StaticAreaBoxProps } from './components/StaticAreaBox';
 import { APP_CONTAINER_HEIGHT, APP_CONTAINER_WIDTH, DRAGGABLE_BOXES_COUNT, DRAGGABLE_BOX_SIZE, STATIC_BOX_SIZE } from './utils';
 
