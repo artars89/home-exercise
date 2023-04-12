@@ -15,7 +15,7 @@ function getRandomBoxGap() {
   return parseInt(`${Math.random() * 30}`, 10) + 10;
 }
 
-const draggableBoxes: DraggableElementProps[] = [...Array(DRAGGABLE_BOXES_COUNT).keys()]
+const draggableEls: DraggableElementProps[] = [...Array(DRAGGABLE_BOXES_COUNT).keys()]
     .map(id => ({
       id: `i${id}`,
       x: DRAGGABLE_BOX_SIZE * (id % 2) + (id % 2) * 50 + getRandomBoxGap(),
@@ -25,7 +25,7 @@ const draggableBoxes: DraggableElementProps[] = [...Array(DRAGGABLE_BOXES_COUNT)
 export default function App() {
   const [circlesEnabled, setCirclesEnabled] = useState(false);
   const [boxPositions, setBoxPositions] = useState<StaticAreaBoxProps['boxPositions']>({});
-  const onDraggableBoxUpdate: DraggableElementProps['onUpdate'] = (id, pos) => {
+  const onDraggableUpdate: DraggableElementProps['onUpdate'] = (id, pos) => {
     setBoxPositions({ ...boxPositions, [id]: pos });
   };
 
@@ -43,12 +43,12 @@ export default function App() {
           boxPositions={boxPositions}
         />
         {
-          draggableBoxes.map((draggableBoxe) => (
+          draggableEls.map((draggableEl) => (
             <DraggableElement
-              {...draggableBoxe}
-              key={draggableBoxe.id}
+              {...draggableEl}
+              key={draggableEl.id}
               circle={circlesEnabled}
-              onUpdate={onDraggableBoxUpdate}
+              onUpdate={onDraggableUpdate}
             />
           ))
         }
